@@ -2,7 +2,7 @@ from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.models import User, Group
 from django.views.decorators.csrf import csrf_exempt
 
-from rest_framework import viewsets, permissions
+from rest_framework import viewsets, permissions, mixins, generics
 from rest_framework.parsers import JSONParser
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -32,45 +32,26 @@ class GroupViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
 
-@api_view(["GET", "POST"])
-def post_list(request, format=None):
-    """
-    List all posts or create new post
-    """
-    if request.method == "GET":
-        post = Post.objects.all()
-        serializer = PostSerializer(post, many=True)
-        return JsonResponse(serializer.data, safe=False)
+class PostList(mixins.ListModelMixin, mixins.CreateModelMixin, generics.GenericAPIView):
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
 
-    elif request.method == "POST":
-        data = JSONParser().parse(request)
-        serializer = PostSerializer(data=data)
-        if serializer.is_valid():
-            serializer.save()
-            return JsonResponse(serializer.data, status=201)
-        return JsonResponse(serializer.errors, status=400)
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
 
 
-@api_view(["GET", "PUT", "DELETE"])
-def post_detail(request, pk, format=None):
-    """
-    Retrieve, update or delete a post
-    """
-    try:
-        post = Post.objects.get(pk=pk)
-    except Post.DoesNotExist:
-        return HttpResponse(status=404)
+class PostDetail(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixins.DestroyModelMixin, generics.GenericAPIView):
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
 
-    if request.method == "GET":
-        serializer = PostSerializer(post)
-        return JsonResponse(serializer.data)
-    elif request.method == "PUT":
-        data = JSONParser().parse(request)
-        serializer = PostSerializer(post, data=data)
-        if serializer.is_valid():
-            serializer.save()
-            return JsonResponse(serializer.data)
-        return JsonResponse(serializer.errors, status=400)
-    elif request.method == "DELETE":
-        post.delete()
-        return HttpResponse(status=204)
+    def get(self, request, *args, **kwargs):
+        return self.retrieve(request, *args, **kwargs)
+
+    def put(self, request, *args, **kwargs):
+        return self.update(request, *args, **kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        return self.destroy(request, *args, **kwargs)
