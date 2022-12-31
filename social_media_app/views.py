@@ -1,10 +1,15 @@
+from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.models import User, Group
+from django.views.decorators.csrf import csrf_exempt
+
 from rest_framework import viewsets, permissions
 from rest_framework.parsers import JSONParser
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+
 from social_media_app.serializers import UserSerializer, GroupSerializer, PostSerializer
-from django.views.decorators.csrf import csrf_exempt
 from social_media_app.models import Post
-from django.http import HttpResponse, JsonResponse
+
 
 # Create your views here.
 
@@ -27,8 +32,8 @@ class GroupViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
 
-@csrf_exempt
-def post_list(request):
+@api_view(["GET", "POST"])
+def post_list(request, format=None):
     """
     List all posts or create new post
     """
@@ -46,8 +51,8 @@ def post_list(request):
         return JsonResponse(serializer.errors, status=400)
 
 
-@csrf_exempt
-def post_detail(request, pk):
+@api_view(["GET", "PUT", "DELETE"])
+def post_detail(request, pk, format=None):
     """
     Retrieve, update or delete a post
     """

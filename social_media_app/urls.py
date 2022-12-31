@@ -1,5 +1,7 @@
 from django.urls import path, include
+
 from rest_framework import routers
+
 from social_media_app import views
 
 router = routers.DefaultRouter()
