@@ -6,7 +6,10 @@ from social_media_app.models import Post
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = User
-        fields = ['url', 'username', 'email', 'groups']
+        fields = ['url', 'username', 'email', 'groups', 'password']
+        extra_kwargs = {
+            'password': {'write_only': True}
+        }
 
 
 class GroupSerializer(serializers.HyperlinkedModelSerializer):
@@ -34,4 +37,5 @@ class GroupSerializer(serializers.HyperlinkedModelSerializer):
 class PostSerializer(serializers.ModelSerializer):
     class Meta:
         model = Post
-        fields = ['id', 'content', 'user']
+        fields = "__all__"
+        user = serializers.ReadOnlyField(source='user.username')

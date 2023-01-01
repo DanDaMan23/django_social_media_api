@@ -9,6 +9,7 @@ from rest_framework.response import Response
 
 from social_media_app.serializers import UserSerializer, GroupSerializer, PostSerializer
 from social_media_app.models import Post
+from social_media_app.permissions import IsOwnerOrReadOnly
 
 
 # Create your views here.
@@ -35,8 +36,14 @@ class GroupViewSet(viewsets.ModelViewSet):
 class PostList(generics.ListCreateAPIView):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
 
 
 class PostDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
+    permission_classes = [
+        permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
