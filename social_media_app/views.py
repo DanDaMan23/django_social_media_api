@@ -2,10 +2,11 @@ from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.models import User, Group
 from django.views.decorators.csrf import csrf_exempt
 
-from rest_framework import viewsets, permissions, mixins, generics
+from rest_framework import viewsets, permissions, mixins, generics, renderers
 from rest_framework.parsers import JSONParser
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from rest_framework.reverse import reverse
 
 from social_media_app.serializers import UserSerializer, GroupSerializer, PostSerializer
 from social_media_app.models import Post
@@ -47,3 +48,20 @@ class PostDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = PostSerializer
     permission_classes = [
         permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
+
+
+@api_view(['GET'])
+def api_root(request, format=None):
+    return Response({
+        'users': reverse('user-list', request=request, format=format),
+        'posts': reverse('post-list', request=request, format=format)
+    })
+
+
+class PostContent(generics.GenericAPIView):
+    queryset = Post.objects.all()
+    renderer_classes = [renderers.StaticHTMLRenderer]
+
+    def get(self, request, *args, **kwargs):
+        post = self.get_object()
+        return Response(post.content)
