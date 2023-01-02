@@ -22,7 +22,7 @@ class GroupSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class PostSerializer(serializers.ModelSerializer):
-    content = serializers.HyperlinkedIdentityField(view_name='post-content')
+    # content = serializers.HyperlinkedIdentityField(view_name='post-content')
 
     class Meta:
         model = Post
