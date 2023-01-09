@@ -3,6 +3,8 @@ from django.contrib.auth.models import User, Group
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.validators import UniqueValidator
+from rest_framework.authentication import TokenAuthentication
+
 from django.contrib.auth.password_validation import validate_password
 
 from social_media_app.models import Post
@@ -11,10 +13,7 @@ from social_media_app.models import Post
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = User
-        fields = ['url', 'username', 'email', 'groups', 'password']
-        extra_kwargs = {
-            'password': {'write_only': True}
-        }
+        fields = ['url', 'username', 'email', 'groups']
 
 
 class RegisterSerializer(serializers.ModelSerializer):
@@ -57,9 +56,8 @@ class GroupSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class PostSerializer(serializers.ModelSerializer):
-    # content = serializers.HyperlinkedIdentityField(view_name='post-content')
 
     class Meta:
         model = Post
-        fields = "__all__"
+        fields = ["content", "user"]
         user = serializers.ReadOnlyField(source='user.url')
