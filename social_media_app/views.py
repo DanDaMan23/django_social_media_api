@@ -7,8 +7,10 @@ from rest_framework.parsers import JSONParser
 from rest_framework.decorators import api_view, action
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
+from rest_framework.authtoken.views import ObtainAuthToken
+from rest_framework.authtoken.models import Token
 
-from social_media_app.serializers import UserSerializer, GroupSerializer, PostSerializer
+from social_media_app.serializers import UserSerializer, GroupSerializer, PostSerializer, RegisterSerializer
 from social_media_app.models import Post
 from social_media_app.permissions import IsOwnerOrReadOnly
 
@@ -23,6 +25,11 @@ class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all().order_by('-date_joined')
     serializer_class = UserSerializer
     permission_classes = [permissions.IsAuthenticated]
+
+
+class RegisterUserView(generics.CreateAPIView):
+    permission_classes = [permissions.AllowAny]
+    serializer_class = RegisterSerializer
 
 
 class GroupViewSet(viewsets.ModelViewSet):
