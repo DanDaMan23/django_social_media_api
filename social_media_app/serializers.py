@@ -7,7 +7,7 @@ from rest_framework.authentication import TokenAuthentication
 
 from django.contrib.auth.password_validation import validate_password
 
-from social_media_app.models import Post
+from social_media_app.models import Post, Comment, Tag
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
@@ -61,3 +61,10 @@ class PostSerializer(serializers.ModelSerializer):
         model = Post
         fields = ["content", "user"]
         user = serializers.ReadOnlyField(source='user.url')
+
+
+class CommentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Comment
+        fields = ["content", "post", "user"]
+        read_only_fields = ['user']

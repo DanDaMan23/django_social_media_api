@@ -9,6 +9,7 @@ router = routers.DefaultRouter()
 router.register(r'user', views.UserViewSet)
 router.register(r'group', views.GroupViewSet, basename='groups')
 router.register(r'posts', views.PostViewSet, basename='posts')
+router.register(r'comment', views.CommentViewSet)
 
 # router.register(r'post', views.post_list)
 
