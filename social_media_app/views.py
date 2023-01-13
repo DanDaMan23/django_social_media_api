@@ -1,16 +1,11 @@
-from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.models import User, Group
-from django.views.decorators.csrf import csrf_exempt
 
 from rest_framework import viewsets, permissions, mixins, generics, renderers
-from rest_framework.parsers import JSONParser
-from rest_framework.decorators import api_view, action
-from rest_framework.response import Response
-from rest_framework.reverse import reverse
-from rest_framework.authtoken.views import ObtainAuthToken
-from rest_framework.authtoken.models import Token
+from rest_framework.decorators import action
 
-from social_media_app.serializers import UserSerializer, GroupSerializer, PostSerializer, RegisterSerializer, CommentSerializer
+from social_media_app.serializers.user_system_serializers import UserSerializer, RegisterSerializer, GroupSerializer
+from social_media_app.serializers.post_system_serializers import PostSerializer, CommentSerializer
+
 from social_media_app.models import Post, Comment
 from social_media_app.permissions import IsOwnerOrReadOnly
 

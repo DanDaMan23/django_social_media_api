@@ -1,29 +1,25 @@
-from rest_framework import serializers
+from rest_framework.serializers import HyperlinkedModelSerializer, ModelField, EmailField, CharField, ValidationError, ModelSerializer
 from django.contrib.auth.models import User, Group
-from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.validators import UniqueValidator
-from rest_framework.authentication import TokenAuthentication
 
 from django.contrib.auth.password_validation import validate_password
 
-from social_media_app.models import Post, Comment, Tag
 
-
-class UserSerializer(serializers.HyperlinkedModelSerializer):
+class UserSerializer(HyperlinkedModelSerializer):
     class Meta:
         model = User
         fields = ['url', 'username', 'email', 'groups']
 
 
-class RegisterSerializer(serializers.ModelSerializer):
-    email = serializers.EmailField(
+class RegisterSerializer(ModelSerializer):
+    email = EmailField(
         required=True, validators=[UniqueValidator(queryset=User.objects.all())]
     )
-    password = serializers.CharField(
+    password = CharField(
         write_only=True, required=True, validators=[validate_password]
     )
-    password2 = serializers.CharField(write_only=True, required=True)
+    password2 = CharField(write_only=True, required=True)
 
     class Meta:
         model = User
@@ -34,7 +30,7 @@ class RegisterSerializer(serializers.ModelSerializer):
 
     def validate(self, attrs):
         if attrs['password'] != attrs['password2']:
-            raise serializers.ValidationError(
+            raise ValidationError(
                 {'password': "Password fields did not match."}
             )
         return attrs
@@ -49,23 +45,7 @@ class RegisterSerializer(serializers.ModelSerializer):
         return user
 
 
-class GroupSerializer(serializers.HyperlinkedModelSerializer):
+class GroupSerializer(HyperlinkedModelSerializer):
     class Meta:
         model = Group
         fields = ['url', 'name']
-
-
-class PostSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = Post
-        fields = ['id', "content", "user", "comments"]
-        read_only_fields = ["comments"]
-        user = serializers.ReadOnlyField(source='user.url')
-
-
-class CommentSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Comment
-        fields = ["content", "post", "user"]
-        read_only_fields = ['user']
