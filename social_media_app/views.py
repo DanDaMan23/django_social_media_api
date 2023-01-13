@@ -10,8 +10,8 @@ from rest_framework.reverse import reverse
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 
-from social_media_app.serializers import UserSerializer, GroupSerializer, PostSerializer, RegisterSerializer
-from social_media_app.models import Post
+from social_media_app.serializers import UserSerializer, GroupSerializer, PostSerializer, RegisterSerializer, CommentSerializer
+from social_media_app.models import Post, Comment
 from social_media_app.permissions import IsOwnerOrReadOnly
 
 
@@ -49,6 +49,17 @@ class PostViewSet(viewsets.ModelViewSet):
     serializer_class = PostSerializer
     permission_classes = [
         permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
+
+    @action(detail=True, renderer_classes=[renderers.StaticHTMLRenderer])
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+class CommentViewSet(viewsets.ModelViewSet):
+    queryset = Comment.objects.all()
+    serializer_class = CommentSerializer
+    permission_classes = [
+        permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly
+    ]
 
     @action(detail=True, renderer_classes=[renderers.StaticHTMLRenderer])
     def perform_create(self, serializer):
