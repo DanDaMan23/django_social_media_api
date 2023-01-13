@@ -59,7 +59,8 @@ class PostSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Post
-        fields = ["content", "user"]
+        fields = ['id', "content", "user", "comments"]
+        read_only_fields = ["comments"]
         user = serializers.ReadOnlyField(source='user.url')
 
 
