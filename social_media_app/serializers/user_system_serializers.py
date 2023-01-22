@@ -9,7 +9,8 @@ from django.contrib.auth.password_validation import validate_password
 class UserSerializer(HyperlinkedModelSerializer):
     class Meta:
         model = User
-        fields = ['url', 'username', 'email', 'groups']
+        fields = ['url', 'first_name', 'last_name',
+                  'username', 'email', 'groups']
 
 
 class RegisterSerializer(ModelSerializer):
@@ -23,7 +24,8 @@ class RegisterSerializer(ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['username', 'password', 'password2', 'email']
+        fields = ['first_name', 'last_name', 'username',
+                  'password', 'password2', 'email']
         extra_kwargs = {
             'username': {'required': True}
         }
