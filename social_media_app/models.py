@@ -15,6 +15,10 @@ class Post(Model):
         User, on_delete=CASCADE, null=True, related_name="posts")
     tags = ManyToManyField(Tag)
 
+    @property
+    def username(self):
+        return self.user.username # type: ignore
+
 
 class Comment(Model):
     date_created = DateTimeField(auto_now_add=True)
@@ -23,3 +27,7 @@ class Comment(Model):
         User, on_delete=CASCADE, null=True, related_name="comments")
     post = ForeignKey(
         Post, on_delete=CASCADE, null=True, related_name="comments")
+
+    @property
+    def username(self):
+        return self.user.username # type: ignore
