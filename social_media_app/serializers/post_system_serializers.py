@@ -8,7 +8,7 @@ class PostSerializer(ModelSerializer):
 
     class Meta:
         model = Post
-        fields = ['id', "content", "comments", "username"]
+        fields = ['id', "content", "comments", "username", "date_created"]
         read_only_fields = ["comments"]
         user = ReadOnlyField(source='user.url')
 
@@ -18,5 +18,5 @@ class CommentSerializer(ModelSerializer):
 
     class Meta:
         model = Comment
-        fields = ["content", "post", "username"]
+        fields = ["content", "post", "username", "date_created"]
         read_only_fields = ['user']
