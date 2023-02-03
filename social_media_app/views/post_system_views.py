@@ -14,7 +14,7 @@ class PostViewSet(ModelViewSet):
     """
     This viewset automatically provides 'list', 'create', 'retrieve', 'update' and 'destroy' action.
     """
-    queryset = Post.objects.all()
+    queryset = Post.objects.all().order_by('-date_created')
     serializer_class = PostSerializer
     permission_classes = [
         IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
@@ -24,7 +24,7 @@ class PostViewSet(ModelViewSet):
         serializer.save(user=self.request.user)
 
 class CommentViewSet(ModelViewSet):
-    queryset = Comment.objects.all()
+    queryset = Comment.objects.all().order_by('-date_created')
     serializer_class = CommentSerializer
     permission_classes = [
         IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly
